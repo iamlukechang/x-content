@@ -1,0 +1,36 @@
+<polymer-element name="foo-bar">
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 100px;
+        height: 100px;
+        background: red;
+        color: white;
+      }
+    </style>
+    <content select="*"></content>
+  </template>
+  <script>
+    Polymer({
+      ready: function () {
+        console.log('ready');
+      },
+      domReady: function () {
+        console.log('domReady', this.children);
+      }
+    });
+  </script>
+</polymer-element>
+
+<template id="content">
+  <foo-bar id="blo">
+    <template id="repeater" is="auto-binding" repeat="{{a in b}}">
+      <div>{{a}}</div>
+    </template>
+  </foo-bar>
+  <script>
+    console.log('in template', document.querySelector('#blo'));
+    document.querySelector('#repeater').b = [1, 2, 3];
+  </script>
+</template>

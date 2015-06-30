@@ -1,0 +1,88 @@
+<!--
+/**
+ * <x-content></x-content>
+ *
+ * Dynamically load html content and create the node in the current DOM true
+ *
+ * EX:
+ *
+ * index.html
+ *
+ *   <body>
+ *     ...
+ *     <x-content url="foobar.html"></x-content>
+ *     ...
+ *   </body>
+ *
+ *
+ *
+ * foobar.html
+ *
+ *   <template id="content">
+ *     Hello, x-content!
+ *   </template>
+ *
+ *
+ * @attribute url {string} Import location
+ * @attribute preload {boolean} How the content should be loaded when the
+ *   x-content element is ready
+ *
+ * @author iamlukechang@gmail.com (Luke Chang)
+ */
+-->
+
+<link rel="import" href="bower_components/polymer/polymer.html" />
+
+<polymer-element name="x-content" attributes="url preload">
+  <script>
+    Polymer({
+      /**
+       * If set to true, the content will be automatically loaded in the ready
+       * life cycle callback
+       */
+      preload: false,
+
+      /**
+       * Set to true once the content is fully loaded
+       */
+      _loaded: false,
+
+      ready: function () {
+        if (this.preload && typeof this.url === 'string') this.loadContent(this.url);
+      },
+
+      /**
+       * Load the content with an url using html5 import link
+       *
+       * @param url {string} Import location
+       */
+      loadContent: function (url) {
+        url = url || this.url;
+        if (this._loaded || !url) return;
+
+        var that = this;
+
+        // Create a link element that imports content with this.url
+        var link = document.createElement('link');
+        link.rel = 'import';
+        link.href = url;
+        link.onload = function () {
+          // If there is a content template, import it into the current DOM tree
+          // under the current x-content element
+          var template = this.import.querySelector('template#content');
+          if (template) {
+            var node = document.importNode(template.content, true);
+            that.appendChild(node);
+          }
+
+          // Trigger loaded event
+          that.fire('loaded');
+          that._loaded = true;
+        };
+
+        // Place the link element into head
+        document.head.appendChild(link);
+      }
+    });
+  </script>
+</polymer-element>
