@@ -26,6 +26,7 @@
  * @attribute url {string} Import location
  * @attribute preload {boolean} How the content should be loaded when the
  *   x-content element is ready
+ * @attribute target {string} The template id in target html file
  *
  * @author iamlukechang@gmail.com (Luke Chang)
  */
@@ -33,7 +34,7 @@
 
 <link rel="import" href="../polymer/polymer.html" />
 
-<polymer-element name="x-content" attributes="url preload">
+<polymer-element name="x-content" attributes="url preload target">
   <script>
     Polymer({
       /**
@@ -69,7 +70,7 @@
         link.onload = function () {
           // If there is a content template, import it into the current DOM tree
           // under the current x-content element
-          var template = this.import.querySelector('template#content');
+          var template = this.import.querySelector('template' + (that.target || '#content'));
           if (template) {
             var node = document.importNode(template.content, true);
             that.appendChild(node);
